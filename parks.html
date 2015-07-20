@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js" type="text/javascript"></script>
+<script>
+
+
+$(function() {
+	var FIELD_HEIGHT = 8;
+	var FIELD_WIDTH = 8;
+
+	var margin_left = 150;
+	var margin_top = 50;
+	
+	var fields = [];
+	var parkColors = ['00008C', '006400', '808080','8B008B','818000','C3C9CF','E9967A', '2E4E4D'];
+
+	for (var row = 1; row <= FIELD_HEIGHT; row++) 
+		{
+		for (var col = 1; col <= FIELD_WIDTH; col++) 
+		{
+			var field_id = (row-1)*FIELD_WIDTH+col;
+			$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px">'+field_id+'</div>');
+
+			fields[field_id] = {"row":row, "col":col, "color":"#333", "status":"unknown"};
+
+			margin_left += 51;
+		};
+		margin_left = 150;
+		margin_top += 51;
+	};
+	for (var row = 1; row <= 64; row++) {
+		console.log(fields[row]);
+	}
+
+	for (var i = parkColors.length - 1; i >= 0; i--) {
+		$("#colorlist").append('<li id="'+parkColors[i]+'" style="background-color: #'+parkColors[i]+';"></li>');
+	};
+
+
+	$('.field').click(function() { 
+        var id = $(this).attr('id');
+        console.log(fields[id].col);
+        return false; 
+    });
+
+});
+	
+</script>
+</head>
+
+<body>
+
+<div id="container" style="width: 800px; height: 600px;">
+	
+	<div class="colors">
+		<ul id="colorlist" style="list-style: none;">
+		</ul>
+	</div>
+
+</div>
+
+
+</body>
+</html>

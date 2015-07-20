@@ -1,0 +1,19 @@
+INIT class Cube with parameters row, col, color, state (empty, filled, unknwon)
+INIT dict parks 
+Sort parks from min to max parks fields
+
+INIT tree_count = 1
+
+Create table 6x6
+
+If mouse press on field
+	If there is not a key in parks with selected color
+		Add new key in parks with color
+	Else
+		Add to park, to dict with color key
+		
+For i in range col
+	For j in range row
+		
+
+
