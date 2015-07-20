@@ -12,19 +12,38 @@ $(function() {
 
 	var margin_left = 150;
 	var margin_top = 50;
+	var current_color = '#ddd';
 	
 	var fields = [];
-	var parkColors = ['00008C', '006400', '808080','8B008B','818000','C3C9CF','E9967A', '2E4E4D'];
+	var parkColors = ['00008C','006400','808080','8B008B','818000','4682B4','E9967A','2E4E4D'];
+
+	//-----Temperory parks
+
+	dbpark = ['00008C', 1,9,17,25,33,41,26];
+	gpark = ['006400',2,3,4,5,10,11,18,19];
+	lgpark = ['808080',6,7,8,12,13,14,15,16,20,22,23,24];
+	dgpark = ['2E4E4D',39,47,55,56,59,60,61,62,63,64];
+	ppark = ['8B008B',21,27,28,29,34,35,36,43];
+	lbpark = ['4682B4',42,49,50,51,57,58];
+	opark = ['E9967A',37,44,45,52,53,54];
+	ypark = ['818000',30,31,32,38,40,46,48];
+	f = [dbpark,gpark,lgpark,dgpark,ppark,lbpark,opark,ypark];
+
+	//----------------------
 
 	for (var row = 1; row <= FIELD_HEIGHT; row++) 
 		{
 		for (var col = 1; col <= FIELD_WIDTH; col++) 
 		{
 			var field_id = (row-1)*FIELD_WIDTH+col;
-			$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px">'+field_id+'</div>');
+			$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px"></div>');
 
-			fields[field_id] = {"row":row, "col":col, "color":"#333", "status":"unknown"};
-
+			for (var i = f.length - 1; i >= 0; i--) {
+				if ($.inArray(field_id, f[i]) > -1)
+					var color = "#"+f[i][0];
+					$("#"+field_id ).css("background-color", color);
+					fields[field_id] = {"row":row, "col":col, "color":color, "status":"unknown"};
+			};
 			margin_left += 51;
 		};
 		margin_left = 150;
@@ -35,13 +54,20 @@ $(function() {
 	}
 
 	for (var i = parkColors.length - 1; i >= 0; i--) {
-		$("#colorlist").append('<li id="'+parkColors[i]+'" style="background-color: #'+parkColors[i]+';"></li>');
+		$("#colorlist").append('<li class="choicecolor" id="'+parkColors[i]+'" style="background-color: #'+parkColors[i]+';"></li>');
 	};
 
 
-	$('.field').click(function() { 
+	$('.choicecolor').click(function() { 
         var id = $(this).attr('id');
-        console.log(fields[id].col);
+        $( ".currentcolor #current" ).css( "background-color", "#"+id);
+        current_color = "#"+id;
+        return false; 
+    });
+
+   $('.field').click(function() { 
+        var id = $(this).attr('id');
+        $( this ).css("background-color", current_color);
         return false; 
     });
 
@@ -57,6 +83,9 @@ $(function() {
 	<div class="colors">
 		<ul id="colorlist" style="list-style: none;">
 		</ul>
+		<div class="currentcolor">Current color
+			<div id="current"></div>
+		</div>
 	</div>
 
 </div>

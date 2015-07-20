@@ -24,3 +24,13 @@
 #colorlist li:hover{
 	margin-left: 4px;
 }
+
+.currentcolor{
+	margin-left: 40px;
+}
+
+.currentcolor #current{
+	width: 80px; 
+	height: 20px;
+	background-color: #2342a6;
+}
