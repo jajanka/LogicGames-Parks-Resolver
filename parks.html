@@ -18,7 +18,7 @@ $(function() {
 	var parkColors = ['00008C','006400','808080','8B008B','818000','4682B4','E9967A','2E4E4D'];
 
 	//-----Temperory parks
-
+	/*
 	dbpark = ['00008C', 1,9,17,25,33,41,26];
 	gpark = ['006400',2,3,4,5,10,11,18,19];
 	lgpark = ['808080',6,7,8,12,13,14,15,16,20,22,23,24];
@@ -28,7 +28,7 @@ $(function() {
 	opark = ['E9967A',37,44,45,52,53,54];
 	ypark = ['818000',30,31,32,38,40,46,48];
 	f = [dbpark,gpark,lgpark,dgpark,ppark,lbpark,opark,ypark];
-
+	*/
 	//----------------------
 
 	for (var row = 1; row <= FIELD_HEIGHT; row++) 
@@ -38,20 +38,20 @@ $(function() {
 			var field_id = (row-1)*FIELD_WIDTH+col;
 			$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px">'+field_id+'</div>');
 
-			for (var i = f.length - 1; i >= 0; i--) 
-			{
-				if ($.inArray(field_id, f[i]) > -1){
-					var color = "#"+f[i][0];
-					$("#"+field_id ).css("background-color", "#ddd");
-					fields[field_id] = {"row":row, "col":col, "color":color, "status":"empty"};
-				}
-			};
+			//for (var i = f.length - 1; i >= 0; i--) 
+			//{
+			//	if ($.inArray(field_id, f[i]) > -1){
+			//		var color = "#"+f[i][0];
+			//		$("#"+field_id ).css("background-color", "#ddd");
+					fields[field_id] = {"row":row, "col":col, "color":"#ddd", "status":"empty"};
+			//	}
+			//};
 			margin_left += 51;
 		};
 		margin_left = 150;
 		margin_top += 51;
 	};
-	for (var row = 1; row <= 64; row++) {
+	for (var row = 1; row <= FIELD_HEIGHT*FIELD_WIDTH; row++) {
 		console.log(fields[row]);
 	}
 
@@ -70,41 +70,43 @@ $(function() {
    $('.field').click(function() { 
         var id = $(this).attr('id');
         $( this ).css("background-color", current_color);
-        console.log( getAdj(parseInt(id)) );
+        console.log( getAdj(parseInt(id), FIELD_WIDTH, FIELD_HEIGHT) );
         return false; 
     });
 
-   function getAdj(id){
+   function getAdj(id, w, h){
+
+   		//var w=8; var h=8;
    		if (id == 1) // left up
-   			return [id+8,id+9,id+1];
+   			return [id+w,id+w+1,id+1];
 
-   		else if (id == 8) // right up
-   			return [id-1,id+8,id+7];
+   		else if (id == w) // right up
+   			return [id-1,id+w,id+w-1];
 
-   		else if (id == 57) // left down
-   			return [id+1,id-8,id-7];
+   		else if (id == w*(h-1)+1) // left down
+   			return [id+1,id-w,id-w+1];
 
-   		else if (id == 64) // right down
-   			return [id-1,id-9,id-8];
+   		else if (id == w*h) // right down
+   			return [id-1,id-w-1,id-w];
 
-   		else if (id % 8 - 1 == 0) // left
-   			return [id+8,id+9,id+1,id-8,id-7];
+   		else if (id % w - 1 == 0) // left
+   			return [id+w,id+w+1,id+1,id-w,id-w+1];
 
-   		else if (id % 8 == 0) // right
-   			return [id+8,id+7,id-1,id-8,id-9];
+   		else if (id % w == 0) // right
+   			return [id+w,id+w-1,id-1,id-w,id-w+1];
 
-   		else if (id < 9) // up
-   			return [id+7,id+8,id+9,id-1,id+1];
+   		else if (id < w+1) // up
+   			return [id+w-1,id+w,id+w+1,id-1,id+1];
 
-   		else if (id > 56) // down
-   			return [id-1,id+1,id-9,id-8,id-7];
+   		else if (id > w*(h-1)) // down
+   			return [id-1,id+1,id-w-1,id-w,id-w+1];
 
 
-   		return [id+7,id+8,id+9,id-1,id+1,id-9,id-8,id-7];
+   		return [id+w-1,id+w,id+w+1,id-1,id+1,id-w-1,id-w,id-w+1];
    }
 
    function clearRow(id){
-   		for (var i = 0; i < 8; i++) {
+   		for (var i = 0; i < FIELD_WIDTH; i++) {
    			$('#'+field_id+i).css("background-color", "#ddd");
    		};
    }
@@ -126,19 +128,19 @@ $(function() {
    				clearRow(field_id);
    			}
 
-   			if (8*(r-1)+first > 8*(r-1)+1)
+   			if (FIELD_WIDTH*(r-1)+first > FIELD_WIDTH*(r-1)+1)
 					$('#'+(field_id-1)).css("background-color", "#ddd");
 
    			if ($.inArray(field_id, restricted_cells) == -1)
    			{
 				fields[field_id].status = "tree";
 
-				//if (8*(r-1)+first > 8*(r-1)+1)
+				//if (FIELD_WIDTH*(r-1)+first > FIELD_WIDTH*(r-1)+1)
 				//	$('#'+(field_id-1)).css("background-color", "#ddd");
 				
 				$("#"+field_id).css("background-color", "#555");
 
-				var adjacents_first = getAdj(parseInt(field_id));
+				var adjacents_first = getAdj( parseInt(field_id), FIELD_WIDTH, FIELD_HEIGHT) ;
 				restricted_cells_first = Array.prototype.concat.apply(restricted_cells_first, adjacents_first);
    			}
    			else{
@@ -165,10 +167,10 @@ $(function() {
 					//	$("#"+field_id-1).css("background-color", "#ddd");
 					$("#"+field_id).css("background-color", "#999");
 
-					var adjacents_second = getAdj(parseInt(field_id));
+					var adjacents_second = getAdj( parseInt(field_id), FIELD_WIDTH, FIELD_HEIGHT );
 					restricted_cells_second = Array.prototype.concat.apply(restricted_cells_second, adjacents_second);
 
-					if (r < 8) solveParks(r+1, Array.prototype.concat.apply(restricted_cells_second, restricted_cells_first));
+					if (r < FIELD_HEIGHT) solveParks(r+1, Array.prototype.concat.apply(restricted_cells_second, restricted_cells_first));
 	   			}
 	   			else{
 	   				//if (fields[field_id].status == "tree")
