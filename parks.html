@@ -38,11 +38,12 @@ $(function() {
 			var field_id = (row-1)*FIELD_WIDTH+col;
 			$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px">'+field_id+'</div>');
 
-			for (var i = f.length - 1; i >= 0; i--) {
+			for (var i = f.length - 1; i >= 0; i--) 
+			{
 				if ($.inArray(field_id, f[i]) > -1){
 					var color = "#"+f[i][0];
-					$("#"+field_id ).css("background-color", color);
-					fields[field_id] = {"row":row, "col":col, "color":color, "status":"epmty"};
+					$("#"+field_id ).css("background-color", "#ddd");
+					fields[field_id] = {"row":row, "col":col, "color":color, "status":"empty"};
 				}
 			};
 			margin_left += 51;
@@ -73,13 +74,6 @@ $(function() {
         return false; 
     });
 
-   /*function solveParks(r, restricted_cells){
-   		second = 0;
-   		for (var i = 0; i < FIELD_WIDTH-2; i++) {
-   			Things[i]
-   		};
-   }*/
-
    function getAdj(id){
    		if (id == 1) // left up
    			return [id+8,id+9,id+1];
@@ -108,6 +102,85 @@ $(function() {
 
    		return [id+7,id+8,id+9,id-1,id+1,id-9,id-8,id-7];
    }
+
+   function clearRow(id){
+   		for (var i = 0; i < 8; i++) {
+   			$('#'+field_id+i).css("background-color", "#ddd");
+   		};
+   }
+
+   function solveParks(r, restricted_cells){
+   		var second = 0;
+   		var field_id = 0;
+
+   		for (var first = 1; first < FIELD_WIDTH-1; first++) 
+   		{
+   			//if (first == 2 && r == 1){
+   			//	1+1;
+   			//}
+
+   			field_id = (r-1)*FIELD_WIDTH+first;
+   			var restricted_cells_first = [];
+
+   			if (first == 1){
+   				clearRow(field_id);
+   			}
+
+   			if (8*(r-1)+first > 8*(r-1)+1)
+					$('#'+(field_id-1)).css("background-color", "#ddd");
+
+   			if ($.inArray(field_id, restricted_cells) == -1)
+   			{
+				fields[field_id].status = "tree";
+
+				//if (8*(r-1)+first > 8*(r-1)+1)
+				//	$('#'+(field_id-1)).css("background-color", "#ddd");
+				
+				$("#"+field_id).css("background-color", "#555");
+
+				var adjacents_first = getAdj(parseInt(field_id));
+				restricted_cells_first = Array.prototype.concat.apply(restricted_cells_first, adjacents_first);
+   			}
+   			else{
+   				//if (fields[field_id].status == "tree")
+   				//	$('#'+field_id).css("background-color", "#ddd");
+   				continue;
+   			}
+
+   			for (var second = first+2; second < FIELD_WIDTH+1; second++) 
+	   		{
+	   			var restricted_cells_second = [];
+	   			field_id = (r-1)*FIELD_WIDTH+second;
+
+	   			$('#'+(field_id-1)).css("background-color", "#ddd");
+
+	   			if ($.inArray(field_id, restricted_cells) == -1)
+	   			{
+					fields[field_id].status = "tree";
+
+					//if (8*(r-1)+first > 8*(r-1)+1)
+						$('#'+(field_id-1)).css("background-color", "#ddd");
+
+					//if (field_id % 8 != 0)
+					//	$("#"+field_id-1).css("background-color", "#ddd");
+					$("#"+field_id).css("background-color", "#999");
+
+					var adjacents_second = getAdj(parseInt(field_id));
+					restricted_cells_second = Array.prototype.concat.apply(restricted_cells_second, adjacents_second);
+
+					if (r < 8) solveParks(r+1, Array.prototype.concat.apply(restricted_cells_second, restricted_cells_first));
+	   			}
+	   			else{
+	   				//if (fields[field_id].status == "tree")
+   					//	$('#'+field_id).css("background-color", "#ddd");
+   					continue;
+	   			}
+	   		}
+   		};
+   		return r;
+   }
+
+   console.log(solveParks(1,[]));
 
 });
 	
