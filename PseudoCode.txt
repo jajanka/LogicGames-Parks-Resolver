@@ -1,19 +1,25 @@
-INIT class Cube with parameters row, col, color, state (empty, filled, unknwon)
-INIT dict parks 
-Sort parks from min to max parks fields
+Semi brute/smart aproach
 
-INIT tree_count = 1
+INIT park[8][8] - [row][seq] = empty, restricted, tree
+			
+def solve(r, restricted_cells):
 
-Create table 6x6
-
-If mouse press on field
-	If there is not a key in parks with selected color
-		Add new key in parks with color
-	Else
-		Add to park, to dict with color key
+	second = 0;
+	for first in range(6):
+		if first not in restricted_cells:		
+			restricted_cells_new = [];
+			park[r][first] = 'tree'
+			restricted_cells_new.append( getAdj(park[r][first]) )
+		else:
+			continue
 		
-For i in range col
-	For j in range row
-		
-
-
+		for second in range(first+2, 8):
+			if second not in restricted_cells:
+				park[r][second] = 'tree'
+				restricted_cells_new.append( getAdj(park[r][second]) )
+				return solve(r+1,restricted_cells_new)
+			else:
+				continue
+				
+		return true
+			

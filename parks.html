@@ -36,13 +36,14 @@ $(function() {
 		for (var col = 1; col <= FIELD_WIDTH; col++) 
 		{
 			var field_id = (row-1)*FIELD_WIDTH+col;
-			$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px"></div>');
+			$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px">'+field_id+'</div>');
 
 			for (var i = f.length - 1; i >= 0; i--) {
-				if ($.inArray(field_id, f[i]) > -1)
+				if ($.inArray(field_id, f[i]) > -1){
 					var color = "#"+f[i][0];
 					$("#"+field_id ).css("background-color", color);
-					fields[field_id] = {"row":row, "col":col, "color":color, "status":"unknown"};
+					fields[field_id] = {"row":row, "col":col, "color":color, "status":"epmty"};
+				}
 			};
 			margin_left += 51;
 		};
@@ -68,8 +69,45 @@ $(function() {
    $('.field').click(function() { 
         var id = $(this).attr('id');
         $( this ).css("background-color", current_color);
+        console.log( getAdj(parseInt(id)) );
         return false; 
     });
+
+   /*function solveParks(r, restricted_cells){
+   		second = 0;
+   		for (var i = 0; i < FIELD_WIDTH-2; i++) {
+   			Things[i]
+   		};
+   }*/
+
+   function getAdj(id){
+   		if (id == 1) // left up
+   			return [id+8,id+9,id+1];
+
+   		else if (id == 8) // right up
+   			return [id-1,id+8,id+7];
+
+   		else if (id == 57) // left down
+   			return [id+1,id-8,id-7];
+
+   		else if (id == 64) // right down
+   			return [id-1,id-9,id-8];
+
+   		else if (id % 8 - 1 == 0) // left
+   			return [id+8,id+9,id+1,id-8,id-7];
+
+   		else if (id % 8 == 0) // right
+   			return [id+8,id+7,id-1,id-8,id-9];
+
+   		else if (id < 9) // up
+   			return [id+7,id+8,id+9,id-1,id+1];
+
+   		else if (id > 56) // down
+   			return [id-1,id+1,id-9,id-8,id-7];
+
+
+   		return [id+7,id+8,id+9,id-1,id+1,id-9,id-8,id-7];
+   }
 
 });
 	
