@@ -7,8 +7,8 @@
 
 
 $(function() {
-	var FIELD_HEIGHT = 8;
-	var FIELD_WIDTH = 8;
+	var FIELD_HEIGHT = 3;
+	var FIELD_WIDTH = 7;
 
 	var margin_left = 150;
 	var margin_top = 50;
@@ -107,9 +107,82 @@ $(function() {
 
    function clearRow(id){
    		for (var i = 0; i < FIELD_WIDTH; i++) {
-   			$('#'+field_id+i).css("background-color", "#ddd");
+   			$('#'+(field_id+i)).css("background-color", "#ddd");
    		};
    }
+   function sum(a){
+		var result=0;
+		for (var i=a.length; i--;) {
+	   		result+=a[i];
+		}
+		return result;
+	};
+
+   function solveParks2(r, restricted_cells){
+   		var last_number = FIELD_WIDTH-2// etc. 4,3,2,1.
+   		var current_number = -1;
+   		var current_tree_pos = 1;
+   		var figures = sum(Array.apply(null, {length: last_number+1}).map(Number.call, Number));
+   		var whole_rows = FIELD_WIDTH*(r-1);
+   		var last_placed_trees = [];
+   		var restricted_cells_new = [];
+
+   		//var adjacents = getAdj( parseInt(1+whole_rows), FIELD_WIDTH, FIELD_HEIGHT) ;
+   		//var adjacents2 = getAdj( parseInt(1+whole_rows+2), FIELD_WIDTH, FIELD_HEIGHT) ;
+		//restricted_cells_new = Array.prototype.concat.apply(adjacents, adjacents2);
+
+   		/*if ($.inArray(1+whole_rows, restricted_cells) == -1) {
+   			$( "#"+(current_tree_pos+whole_rows) ).css("background-color", "#555"); // first tree
+   		 	$("#"+(current_tree_pos+2+current_number+whole_rows) ).css("background-color", "#999"); // second tree
+   			if (r < FIELD_HEIGHT) solveParks2(r+1, restricted_cells_new);
+   		}*/
+
+	   	for (var i = 1; i < figures+1; i++) 
+	   	{
+	   		current_number++;
+	   		if ( current_number >= last_number){
+		   		last_number--;
+		   		current_number = 0;
+		   		current_tree_pos++;
+
+	   		if ($.inArray(current_tree_pos+whole_rows, restricted_cells) == -1 && $.inArray(current_tree_pos+whole_rows+2+current_number, restricted_cells) == -1) 
+	   		{
+		   		restricted_cells_new = [];
+		   		
+		   		$("#"+(current_tree_pos+whole_rows)).css("background-color", "#555"); // new tree
+		   		last_placed_trees[1] = current_tree_pos+whole_rows;
+
+		   		if ( current_number >= last_number){
+		   			$("#"+(current_tree_pos-1+whole_rows)).css("background-color", "#ddd");	//delete previous tree
+		   			//$("#"+(current_tree_pos+whole_rows)).css("background-color", "#555"); // new tree
+		   			$("#"+(r*FIELD_WIDTH)).css("background-color", "#ddd"); //delete last second tree
+		   			$("#"+(current_tree_pos+2+whole_rows)).css("background-color", "#999"); //new first second tree	   			
+		   		}	
+		   		else{
+			   		$("#"+(current_tree_pos-1+2+current_number+whole_rows)).css("background-color", "#ddd"); //delete previous second tree
+			   		$("#"+(current_tree_pos+2+current_number+whole_rows)).css("background-color", "#999"); // new second tree
+			   		last_placed_trees[2] = current_tree_pos+2+current_number+whole_rows;
+		   		}
+		   		adjacents = getAdj( parseInt(current_tree_pos+whole_rows), FIELD_WIDTH, FIELD_HEIGHT) ;
+	   			adjacents2 = getAdj( parseInt(current_tree_pos+2+current_number+whole_rows), FIELD_WIDTH, FIELD_HEIGHT) ;
+				restricted_cells_new = Array.prototype.concat.apply(adjacents, adjacents2);
+
+		   		if (r < FIELD_HEIGHT) solveParks2(r+1, restricted_cells_new);
+	   		}
+	   		else{	
+	   			if ( current_number >= last_number){
+		   			last_number--;
+		   			current_number = 0;
+		   			current_tree_pos++;
+		   		}
+	   		}
+	   	};
+	   	$("#"+(last_placed_trees[1])).css("background-color", "#ddd");
+		$("#"+(last_placed_trees[2])).css("background-color", "#ddd");
+	   	return r;
+   }
+   console.log(Array.prototype.concat.apply([3,4],[4,0]));
+   solveParks2(1,[]);
 
    function solveParks(r, restricted_cells){
    		var second = 0;
@@ -117,9 +190,6 @@ $(function() {
 
    		for (var first = 1; first < FIELD_WIDTH-1; first++) 
    		{
-   			//if (first == 2 && r == 1){
-   			//	1+1;
-   			//}
 
    			field_id = (r-1)*FIELD_WIDTH+first;
    			var restricted_cells_first = [];
@@ -128,24 +198,31 @@ $(function() {
    				clearRow(field_id);
    			}
 
-   			if (FIELD_WIDTH*(r-1)+first > FIELD_WIDTH*(r-1)+1)
+   			if (FIELD_WIDTH*(r-1)+first > FIELD_WIDTH*(r-1)+1){
 					$('#'+(field_id-1)).css("background-color", "#ddd");
+					fields[field_id].status = "empty";
+			}
 
    			if ($.inArray(field_id, restricted_cells) == -1)
    			{
+   				//two_in_row = false;
+   				//for (var i = 1; i < FIELD_HEIGHT+1; i++) 
+   				//{
+   					//if ( fields[(i-1)*FIELD_WIDTH+first].status == "tree" )
+   				//};
+
 				fields[field_id].status = "tree";
 
-				//if (FIELD_WIDTH*(r-1)+first > FIELD_WIDTH*(r-1)+1)
-				//	$('#'+(field_id-1)).css("background-color", "#ddd");
-				
 				$("#"+field_id).css("background-color", "#555");
 
 				var adjacents_first = getAdj( parseInt(field_id), FIELD_WIDTH, FIELD_HEIGHT) ;
 				restricted_cells_first = Array.prototype.concat.apply(restricted_cells_first, adjacents_first);
    			}
    			else{
-   				//if (fields[field_id].status == "tree")
-   				//	$('#'+field_id).css("background-color", "#ddd");
+   				if (first == FIELD_WIDTH-2){
+   					fields[field_id].status = "empty";
+   					$('#'+field_id).css("background-color", "#ddd");
+   				}
    				continue;
    			}
 
@@ -154,35 +231,38 @@ $(function() {
 	   			var restricted_cells_second = [];
 	   			field_id = (r-1)*FIELD_WIDTH+second;
 
+	   			if (FIELD_WIDTH*(r-1)+second > FIELD_WIDTH*(r-1)+first+2){
+						$('#'+(field_id-1)).css("background-color", "#ddd");
+						fields[field_id].status = "empty";
+				}
 	   			$('#'+(field_id-1)).css("background-color", "#ddd");
 
 	   			if ($.inArray(field_id, restricted_cells) == -1)
 	   			{
 					fields[field_id].status = "tree";
 
-					//if (8*(r-1)+first > 8*(r-1)+1)
-						$('#'+(field_id-1)).css("background-color", "#ddd");
-
-					//if (field_id % 8 != 0)
-					//	$("#"+field_id-1).css("background-color", "#ddd");
 					$("#"+field_id).css("background-color", "#999");
 
 					var adjacents_second = getAdj( parseInt(field_id), FIELD_WIDTH, FIELD_HEIGHT );
 					restricted_cells_second = Array.prototype.concat.apply(restricted_cells_second, adjacents_second);
 
 					if (r < FIELD_HEIGHT) solveParks(r+1, Array.prototype.concat.apply(restricted_cells_second, restricted_cells_first));
+					$("#"+field_id).css("background-color", "#ddd");
 	   			}
 	   			else{
-	   				//if (fields[field_id].status == "tree")
-   					//	$('#'+field_id).css("background-color", "#ddd");
+	   				if (second == FIELD_WIDTH){
+	   					fields[field_id].status = "empty";
+	   					$('#'+field_id).css("background-color", "#ddd");
+	   				}
    					continue;
 	   			}
 	   		}
    		};
+   		$('#'+((r-1)*FIELD_WIDTH+first)).css("background-color", "#ddd");
    		return r;
    }
 
-   console.log(solveParks(1,[]));
+   //console.log(solveParks(1,[]));
 
 });
 	
