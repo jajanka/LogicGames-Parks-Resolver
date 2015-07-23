@@ -125,10 +125,8 @@ $(function() {
 
 	   	for (var i = 1; i < figures+1; i++) 
 	   	{
-	   		//$("#"+(current_tree_pos-1+2+current_number+whole_rows)).css("background-color", "#ddd"); // delete previous second tree
-		   	//$("#"+(current_tree_pos+whole_rows)).css("background-color", "#ddd"); // delete previous tree
-		   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty";
-		   	fields[current_tree_pos+whole_rows].status = "empty";
+		   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty"; // delete previous second tree
+		   	fields[current_tree_pos+whole_rows].status = "empty"; // delete previous tree
 
 	   		current_number++;
 	   		if ( current_number >= last_number){
@@ -141,26 +139,19 @@ $(function() {
 	   		{
 		   		restricted_cells_new = [];
 		   		
-		   		//$("#"+(current_tree_pos+whole_rows)).css("background-color", "#555"); // new tree
-		   		fields[current_tree_pos+whole_rows].status = "tree";
+		   		fields[current_tree_pos+whole_rows].status = "tree"; // new tree
 		   		last_placed_trees[1] = current_tree_pos+whole_rows;
 
-		   		if ( current_tree_pos > 1 ){
-		   			//$("#"+(current_tree_pos-1+whole_rows)).css("background-color", "#ddd");	//delete previous tree
-		   			//$("#"+(current_tree_pos-1+2+current_number+whole_rows)).css("background-color", "#ddd"); // delete previous second tree
-		   			//$("#"+(r*FIELD_WIDTH)).css("background-color", "#ddd"); //delete last second tree
-		   			//$("#"+(current_tree_pos+2+current_number+whole_rows)).css("background-color", "#999"); //new first second tree	
-		   			fields[current_tree_pos-1+whole_rows].status = "empty";
-				   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty";
-				   	fields[r*FIELD_WIDTH].status = "empty";
-				   	fields[current_tree_pos+2+current_number+whole_rows].status = "tree";
+		   		if ( current_tree_pos > 1 ){ // on first tree change
+		   			fields[current_tree_pos-1+whole_rows].status = "empty"; //delete previous tree
+				   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty"; // delete previous second tree
+				   	fields[r*FIELD_WIDTH].status = "empty"; //delete last second tree
+				   	fields[current_tree_pos+2+current_number+whole_rows].status = "tree"; //new first second tree	
 		   			last_placed_trees[2] = current_tree_pos+2+current_number+whole_rows;   			
 		   		}	
 		   		else{
-			   		//$("#"+(current_tree_pos-1+2+current_number+whole_rows)).css("background-color", "#ddd"); //delete previous second tree
-			   		//$("#"+(current_tree_pos+2+current_number+whole_rows)).css("background-color", "#999"); // new second tree
-			   		fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty";
-				   	fields[current_tree_pos+2+current_number+whole_rows].status = "tree";
+			   		fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty"; //delete previous second tree
+				   	fields[current_tree_pos+2+current_number+whole_rows].status = "tree"; // new second tree
 			   		last_placed_trees[2] = current_tree_pos+2+current_number+whole_rows;
 		   		}
 		   		adjacents = getAdj( parseInt(current_tree_pos+whole_rows), FIELD_WIDTH, FIELD_HEIGHT) ;
@@ -214,8 +205,6 @@ $(function() {
 	   		}
 	   	};
 		if (last_placed_trees.length > 0){
-			//$("#"+(last_placed_trees[1])).css("background-color", "#ddd");
-			//$("#"+(last_placed_trees[2])).css("background-color", "#ddd");
 			fields[last_placed_trees[1]].status = "empty";
 			fields[last_placed_trees[2]].status = "empty";
 		}
