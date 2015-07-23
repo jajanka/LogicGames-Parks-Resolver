@@ -7,7 +7,7 @@
 
 
 $(function() {
-	var FIELD_HEIGHT = 8;
+	var FIELD_HEIGHT = 9;
 	var FIELD_WIDTH = 9;
 
 	var margin_left = 150;
@@ -51,9 +51,9 @@ $(function() {
 		margin_left = 150;
 		margin_top += 51;
 	};
-	for (var row = 1; row <= FIELD_HEIGHT*FIELD_WIDTH; row++) {
-		console.log(fields[row]);
-	}
+	//for (var row = 1; row <= FIELD_HEIGHT*FIELD_WIDTH; row++) {
+	//	console.log(fields[row]);
+	//}
 
 	for (var i = parkColors.length - 1; i >= 0; i--) {
 		$("#colorlist").append('<li class="choicecolor" id="'+parkColors[i]+'" style="background-color: #'+parkColors[i]+';"></li>');
@@ -76,7 +76,6 @@ $(function() {
 
    function getAdj(id, w, h){
 
-   		//var w=8; var h=8;
    		if (id == 1) // left up
    			return [id+w,id+w+1,id+1];
 
@@ -131,8 +130,8 @@ $(function() {
 	   	{
 	   		//$("#"+(current_tree_pos-1+2+current_number+whole_rows)).css("background-color", "#ddd"); // delete previous second tree
 		   	//$("#"+(current_tree_pos+whole_rows)).css("background-color", "#ddd"); // delete previous tree
-		   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "tree";
-		   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "tree";
+		   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty";
+		   	fields[current_tree_pos+whole_rows].status = "empty";
 
 	   		current_number++;
 	   		if ( current_number >= last_number){
@@ -154,42 +153,67 @@ $(function() {
 		   			//$("#"+(current_tree_pos-1+2+current_number+whole_rows)).css("background-color", "#ddd"); // delete previous second tree
 		   			//$("#"+(r*FIELD_WIDTH)).css("background-color", "#ddd"); //delete last second tree
 		   			//$("#"+(current_tree_pos+2+current_number+whole_rows)).css("background-color", "#999"); //new first second tree	
-		   			fields[current_tree_pos-1+2+current_number+whole_rows].status = "tree";
-				   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "tree";
-				   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "tree";
-				   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "tree";
+		   			fields[current_tree_pos-1+whole_rows].status = "empty";
+				   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty";
+				   	fields[r*FIELD_WIDTH].status = "empty";
+				   	fields[current_tree_pos+2+current_number+whole_rows].status = "tree";
 		   			last_placed_trees[2] = current_tree_pos+2+current_number+whole_rows;   			
 		   		}	
 		   		else{
 			   		//$("#"+(current_tree_pos-1+2+current_number+whole_rows)).css("background-color", "#ddd"); //delete previous second tree
 			   		//$("#"+(current_tree_pos+2+current_number+whole_rows)).css("background-color", "#999"); // new second tree
-			   		fields[current_tree_pos-1+2+current_number+whole_rows].status = "tree";
-				   	fields[current_tree_pos-1+2+current_number+whole_rows].status = "tree";
+			   		fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty";
+				   	fields[current_tree_pos+2+current_number+whole_rows].status = "tree";
 			   		last_placed_trees[2] = current_tree_pos+2+current_number+whole_rows;
 		   		}
 		   		adjacents = getAdj( parseInt(current_tree_pos+whole_rows), FIELD_WIDTH, FIELD_HEIGHT) ;
 	   			adjacents2 = getAdj( parseInt(current_tree_pos+2+current_number+whole_rows), FIELD_WIDTH, FIELD_HEIGHT) ;
 				restricted_cells_new = Array.prototype.concat.apply(adjacents, adjacents2);
 
-		   		if (r < FIELD_HEIGHT) solveParks2(r+1, restricted_cells_new);
+		   		if (r < FIELD_HEIGHT) {solveParks2(r+1, restricted_cells_new);}
+		   		else{
+		   			1;
+		   			var tree_count_in_col;
+		   			for (var c_col = 1; c_col < FIELD_WIDTH+1; c_col++) 
+		   			{
+		   				tree_count_in_col = 0;
+		   				for (var c_row = 0; c_row < FIELD_HEIGHT; c_row++) 
+		   				{
+		   					if (fields[c_row*FIELD_WIDTH+c_col].status == "tree")
+		   						tree_count_in_col++;
+		   				}
+		   				if (tree_count_in_col > 2) break;
+		   			};
+		   			if (c_col == FIELD_WIDTH+1 && c_row == FIELD_WIDTH){
+		   				//console.log("Ir");
+		   			}
+		   		}
 	   		}else{
-	   			if ($.inArray(current_tree_pos+whole_rows, restricted_cells) != -1 ) {
-	   				i += last_number-1;
+	   			/*if ($.inArray(current_tree_pos+whole_rows, restricted_cells) != -1 ) { //add speed.
+	   				i += last_number-1;		// if not first tree than current iteration is increased to end a loop faster.
 	   				last_number--;
-	   				current_number = 0;
+	   				current_number = -1;
 	   				current_tree_pos++;
-	   			}
+	   			}*/
 	   		}
 	   	};
-	   	//$("#"+(last_placed_trees[1])).css("background-color", "#ddd");
-		//$("#"+(last_placed_trees[2])).css("background-color", "#ddd");
-		fields[current_tree_pos-1+2+current_number+whole_rows].status = "tree";
-		fields[current_tree_pos-1+2+current_number+whole_rows].status = "tree";
+		if (last_placed_trees.length > 0){
+			//$("#"+(last_placed_trees[1])).css("background-color", "#ddd");
+			//$("#"+(last_placed_trees[2])).css("background-color", "#ddd");
+			fields[last_placed_trees[1]].status = "empty";
+			fields[last_placed_trees[2]].status = "empty";
+		}
 	   	return r;
-   }
-   console.log(Array.prototype.concat.apply([3,4],[4,0]));
-   solveParks2(1,[]);
+ 	}
+   	var d = new Date();
+	var start = d.getTime();
 
+	solveParks2(1,[]);
+
+	d = new Date();
+	console.log(d.getTime() - start);
+   //console.log(performance.timing.connectEnd - performance.timing.connectStart);
+   
 });
 	
 </script>
