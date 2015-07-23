@@ -32,5 +32,8 @@
 .currentcolor #current{
 	width: 80px; 
 	height: 20px;
-	background-color: #2342a6;
+	background-color: #ddd;
+}
+#bttn-solve{
+	padding-top: -55px;
 }

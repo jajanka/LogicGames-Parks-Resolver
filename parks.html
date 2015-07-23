@@ -7,30 +7,30 @@
 
 
 $(function() {
-	var FIELD_HEIGHT = 9;
-	var FIELD_WIDTH = 9;
+	var FIELD_HEIGHT = 8
+	var FIELD_WIDTH = 8;
 
 	var margin_left = 150;
 	var margin_top = 50;
 	var current_color = '#ddd';
-	
+	var parks = 9;
+
 	var fields = [];
-	var parkColors = ['00008C','006400','808080','8B008B','818000','4682B4','E9967A','2E4E4D'];
+	var parkColors = ['#00008C','#006400','#808080','#8B008B','#818000','#4682B4','#E9967A','#2E4E4D'];
+	var f = [];
 
 	//-----Temperory parks
-	/*
-	dbpark = ['00008C', 1,9,17,25,33,41,26];
-	gpark = ['006400',2,3,4,5,10,11,18,19];
-	lgpark = ['808080',6,7,8,12,13,14,15,16,20,22,23,24];
-	dgpark = ['2E4E4D',39,47,55,56,59,60,61,62,63,64];
-	ppark = ['8B008B',21,27,28,29,34,35,36,43];
-	lbpark = ['4682B4',42,49,50,51,57,58];
-	opark = ['E9967A',37,44,45,52,53,54];
-	ypark = ['818000',30,31,32,38,40,46,48];
-	f = [dbpark,gpark,lgpark,dgpark,ppark,lbpark,opark,ypark];
-	*/
+	
+	f[parkColors[0]] = {"trees":0, "ids": [1,9,17,25,33,41,26]}; 
+	f[parkColors[1]] = {"trees":0, "ids": [2,3,4,5,10,11,18,19]};
+	f[parkColors[2]] = {"trees":0, "ids": [6,7,8,12,13,14,15,16,20,22,23,24]};
+	f[parkColors[3]] = {"trees":0, "ids": [39,47,55,56,59,60,61,62,63,64]};
+	f[parkColors[4]] = {"trees":0, "ids": [21,27,28,29,34,35,36,43]};
+	f[parkColors[5]] = {"trees":0, "ids": [42,49,50,51,57,58]};
+	f[parkColors[6]] = {"trees":0, "ids": [37,44,45,52,53,54]};
+	f[parkColors[7]] = {"trees":0, "ids": [30,31,32,38,40,46,48]};
+		
 	//----------------------
-
 	for (var row = 1; row <= FIELD_HEIGHT; row++) 
 		{
 		for (var col = 1; col <= FIELD_WIDTH; col++) 
@@ -38,14 +38,7 @@ $(function() {
 			var field_id = (row-1)*FIELD_WIDTH+col;
 			$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px">'+field_id+'</div>');
 
-			//for (var i = f.length - 1; i >= 0; i--) 
-			//{
-			//	if ($.inArray(field_id, f[i]) > -1){
-			//		var color = "#"+f[i][0];
-			//		$("#"+field_id ).css("background-color", "#ddd");
-					fields[field_id] = {"row":row, "col":col, "color":"#ddd", "status":"empty"};
-			//	}
-			//};
+			fields[field_id] = {"row":row, "col":col, "color":"#ddd", "status":"empty"};
 			margin_left += 51;
 		};
 		margin_left = 150;
@@ -56,21 +49,30 @@ $(function() {
 	//}
 
 	for (var i = parkColors.length - 1; i >= 0; i--) {
-		$("#colorlist").append('<li class="choicecolor" id="'+parkColors[i]+'" style="background-color: #'+parkColors[i]+';"></li>');
+		$("#colorlist").append('<li class="choicecolor" id="'+parkColors[i]+'" style="background-color:'+parkColors[i]+';"></li>');
 	};
 
 
 	$('.choicecolor').click(function() { 
         var id = $(this).attr('id');
-        $( ".currentcolor #current" ).css( "background-color", "#"+id);
-        current_color = "#"+id;
+        $( ".currentcolor #current" ).css( "background-color", id);
+        current_color = id;
         return false; 
     });
 
    $('.field').click(function() { 
         var id = $(this).attr('id');
         $( this ).css("background-color", current_color);
-        console.log( getAdj(parseInt(id), FIELD_WIDTH, FIELD_HEIGHT) );
+
+        if ( f[current_color] === undefined ){
+        	f[current_color] = {"trees":0, "ids": [parseInt(id)]}; 	
+        }
+        else{
+        	f[current_color].ids.push(parseInt(id));
+        }
+
+        //console.log( getAdj(parseInt(id), FIELD_WIDTH, FIELD_HEIGHT) );
+        console.log(f[current_color].ids);
         return false; 
     });
 
@@ -104,11 +106,6 @@ $(function() {
    		return [id+w-1,id+w,id+w+1,id-1,id+1,id-w-1,id-w,id-w+1];
    }
 
-   function clearRow(id){
-   		for (var i = 0; i < FIELD_WIDTH; i++) {
-   			$('#'+(field_id+i)).css("background-color", "#ddd");
-   		};
-   }
    function sum(a){
 		var result=0;
 		for (var i=a.length; i--;) {
@@ -170,31 +167,50 @@ $(function() {
 	   			adjacents2 = getAdj( parseInt(current_tree_pos+2+current_number+whole_rows), FIELD_WIDTH, FIELD_HEIGHT) ;
 				restricted_cells_new = Array.prototype.concat.apply(adjacents, adjacents2);
 
-		   		if (r < FIELD_HEIGHT) {solveParks2(r+1, restricted_cells_new);}
+		   		if (r < FIELD_HEIGHT) {
+		   			var returned_val = solveParks2(r+1, restricted_cells_new);
+		   			if (returned_val.length > 1) return returned_val+last_placed_trees;
+
+		   		}
 		   		else{
-		   			1;
+		   			f["#00008C"] = f["#006400"] = f["#808080"] = f["#2E4E4D"] = 0;//f["#EFEFEF"] = 0;
+					f["#8B008B"] = f["#4682B4"] = f["#E9967A"] = f["#818000"] = 0;
+
 		   			var tree_count_in_col;
 		   			for (var c_col = 1; c_col < FIELD_WIDTH+1; c_col++) 
 		   			{
 		   				tree_count_in_col = 0;
 		   				for (var c_row = 0; c_row < FIELD_HEIGHT; c_row++) 
 		   				{
-		   					if (fields[c_row*FIELD_WIDTH+c_col].status == "tree")
+		   					if (fields[c_row*FIELD_WIDTH+c_col].status == "tree"){
 		   						tree_count_in_col++;
+		   						f[fields[c_row*FIELD_WIDTH+c_col].color] +=1;
+		   					}
 		   				}
 		   				if (tree_count_in_col > 2) break;
 		   			};
 		   			if (c_col == FIELD_WIDTH+1 && c_row == FIELD_WIDTH){
-		   				//console.log("Ir");
+		   				console.log("Ir1");
+		   				var parks_ok = true;
+		   				for (var c = parkColors.length - 1; c >= 0; c--) {
+		   					if (f[parkColors[c]] != 2){
+		   						parks_ok = false;
+		   						break;
+		   					};
+		   				};
+		   				if (parks_ok) {
+		   					console.log("Ir"); 
+		   					return last_placed_trees;				
+		   				}
 		   			}
 		   		}
 	   		}else{
-	   			/*if ($.inArray(current_tree_pos+whole_rows, restricted_cells) != -1 ) { //add speed.
+	   			if ($.inArray(current_tree_pos+whole_rows, restricted_cells) != -1 ) { //add speed.
 	   				i += last_number-1;		// if not first tree than current iteration is increased to end a loop faster.
 	   				last_number--;
 	   				current_number = -1;
 	   				current_tree_pos++;
-	   			}*/
+	   			}
 	   		}
 	   	};
 		if (last_placed_trees.length > 0){
@@ -205,13 +221,38 @@ $(function() {
 		}
 	   	return r;
  	}
-   	var d = new Date();
-	var start = d.getTime();
 
-	solveParks2(1,[]);
+ 	$('#bttn-solve').click(function() { 
+	 	for (var row = 1; row <= FIELD_HEIGHT; row++) 
+		{
+			for (var col = 1; col <= FIELD_WIDTH; col++) 
+			{
+				var field_id = (row-1)*FIELD_WIDTH+col;
 
-	d = new Date();
-	console.log(d.getTime() - start);
+				for (var i = parkColors.length - 1; i >= 0; i--) 
+				{
+					if ($.inArray(field_id, f[parkColors[i]].ids) > -1){
+						var color = parkColors[i];
+						//$("#"+field_id ).css("background-color", color);
+						fields[field_id] = {"row":row, "col":col, "color":color, "status":"empty"};
+					}
+				};
+				margin_left += 51;
+			};
+			margin_left = 150;
+			margin_top += 51;
+		};
+
+ 		var d = new Date();
+		var start = d.getTime();
+		if (fields.length > FIELD_HEIGHT*FIELD_WIDTH)
+			console.log(solveParks2(1,[]));
+
+		d = new Date();
+		console.log(d.getTime() - start);
+        //return false; 
+    });
+
    //console.log(performance.timing.connectEnd - performance.timing.connectStart);
    
 });
@@ -222,7 +263,7 @@ $(function() {
 <body>
 
 <div id="container" style="width: 800px; height: 600px;">
-	
+	<button type="button" id="bttn-solve" >Solve Parks</button>
 	<div class="colors">
 		<ul id="colorlist" style="list-style: none;">
 		</ul>
