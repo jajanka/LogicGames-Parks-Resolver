@@ -1,15 +1,26 @@
 body{
-	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#ffffff+0,c5d3f7+46,638cff+100 */
-	background: #ffffff; /* Old browsers */
-	background: -moz-radial-gradient(center, ellipse cover,  #ffffff 0%, #c5d3f7 46%, #638cff 100%); /* FF3.6+ */
-	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#ffffff), color-stop(46%,#c5d3f7), color-stop(100%,#638cff)); /* Chrome,Safari4+ */
-	background: -webkit-radial-gradient(center, ellipse cover,  #ffffff 0%,#c5d3f7 46%,#638cff 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-radial-gradient(center, ellipse cover,  #ffffff 0%,#c5d3f7 46%,#638cff 100%); /* Opera 12+ */
-	background: -ms-radial-gradient(center, ellipse cover,  #ffffff 0%,#c5d3f7 46%,#638cff 100%); /* IE10+ */
-	background: radial-gradient(ellipse at center,  #ffffff 0%,#c5d3f7 46%,#638cff 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#638cff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#c5d3f7+0,abc0f4+46,638cff+100 */
+	background: #c5d3f7; /* Old browsers */
+	background: -moz-radial-gradient(center, ellipse cover,  #c5d3f7 0%, #abc0f4 46%, #638cff 100%); /* FF3.6+ */
+	background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,#c5d3f7), color-stop(46%,#abc0f4), color-stop(100%,#638cff)); /* Chrome,Safari4+ */
+	background: -webkit-radial-gradient(center, ellipse cover,  #c5d3f7 0%,#abc0f4 46%,#638cff 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-radial-gradient(center, ellipse cover,  #c5d3f7 0%,#abc0f4 46%,#638cff 100%); /* Opera 12+ */
+	background: -ms-radial-gradient(center, ellipse cover,  #c5d3f7 0%,#abc0f4 46%,#638cff 100%); /* IE10+ */
+	background: radial-gradient(ellipse at center,  #c5d3f7 0%,#abc0f4 46%,#638cff 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c5d3f7', endColorstr='#638cff',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
 	font-family: Helvetica;
 	font-size: 14px
+}
+
+h1{
+	color: #333377;
+    opacity: 0.7;
+    filter: alpha(opacity=70); /* For IE8 and earlier */
+    margin-left: 300px;
+}
+#container{
+	width: 800px; 
+	height: 600px;
 }
 .field{
 	background-color: #ddd;
@@ -25,13 +36,16 @@ body{
 
 .colors{
 	position: absolute;
-	margin-top: 100px;
+	margin-top: -30px;
 }
 
+#colorlist{
+	list-style-type: none;
+}
 #colorlist li{
 	width: 80px; 
 	height: 20px;
-	margin: 0px;
+	display: block;
 }
 
 #colorlist li:hover{
@@ -49,14 +63,43 @@ body{
 }
 #bttn-solve{
 	margin-top: 20px;
-	width: 350px;
+	width: 200px;
 	height: 30px;
-	margin-left: 200px;
+	margin-left: 180px;
+	margin-top: 0px;
 }
+#bttn-generate{
+	width: 80px;
+}
+
 #tree{
 	width: 45px;
 	height: 45px;
 	margin-top: -15px;
 	margin-left: 3px;
 	background-image: url("images/tree.png");
+}
+
+input.width, input.height{
+	width: 50px;
+	margin-left: 10px; 
+}
+
+.field-generate{
+	margin-left: 40px;
+}
+
+.field-generate p{
+	margin: 0px;
+	margin-left: 30px
+}
+#footer {
+	margin-top: 50px;
+	text-align:center;
+	border-width: 1px;
+	height:240px;
+	padding:10px;
+	clear:both;
+	color:#121212;
+	margin-left:-8px;
 }

@@ -6,36 +6,12 @@ $(function() {
 	var margin_left = 150;
 	var margin_top = 25	;
 	var current_color = '#ddd';
+	var parks = 0;
 
 	var fields = [];
-	var parkColors = ['#00008C','#006400','#808080','#8B008B','#818000','#4682B4','#E9967A','#2E4E4D','#EFEFEF'];
+	var parkColors = ['#00008C','#006400','#808080','#8B008B','#818000','#4682B4','#E9967A','#2E4E4D','#B8860A','#00BFFE','#FF8C00','#9831CC'];
+	var currentPark = [];
 	var f = [];
-
-	//-----Temperory parks
-	/*
-	f[parkColors[0]] = {"trees":0, "ids": [1,9,17,25,33,41,26]}; 
-	f[parkColors[1]] = {"trees":0, "ids": [2,3,4,5,10,11,18,19]};
-	f[parkColors[2]] = {"trees":0, "ids": [6,7,8,12,13,14,15,16,20,22,23,24]};
-	f[parkColors[3]] = {"trees":0, "ids": [39,47,55,56,59,60,61,62,63,64]};
-	f[parkColors[4]] = {"trees":0, "ids": [21,27,28,29,34,35,36,43]};
-	f[parkColors[5]] = {"trees":0, "ids": [42,49,50,51,57,58]};
-	f[parkColors[6]] = {"trees":0, "ids": [37,44,45,52,53,54]};
-	f[parkColors[7]] = {"trees":0, "ids": [30,31,32,38,40,46,48]};
-	*/	
-	//----------------------
-	for (var row = 1; row <= FIELD_HEIGHT; row++) 
-	{
-		for (var col = 1; col <= FIELD_WIDTH; col++) 
-		{
-			var field_id = (row-1)*FIELD_WIDTH+col;
-			$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px">'+field_id+'</div>');
-
-			fields[field_id] = {"row":row, "col":col, "color":"#ddd", "status":"empty"};
-			margin_left += 52;
-		}
-		margin_left = 150;
-		margin_top += 52;
-	}
 
 	for (var i = parkColors.length - 1; i >= 0; i--) {
 		$("#colorlist").append('<li class="choicecolor" id="'+parkColors[i]+'" style="background-color:'+parkColors[i]+';"></li>');
@@ -49,12 +25,13 @@ $(function() {
         return false; 
     });
 
-   $('.field').click(function() { 
+   $(document).on('click', '.field', function() { // generated element 
         var id = $(this).attr('id');
         $( this ).css("background-color", current_color);
 
         if ( f[current_color] === undefined ){
         	f[current_color] = {"trees":0, "ids": [parseInt(id)]}; 	
+        	currentPark.push(current_color);
         }
         else{
         	f[current_color].ids.push(parseInt(id));
@@ -153,8 +130,8 @@ $(function() {
 
 		   		}
 		   		else{
-		   			f["#00008C"] = f["#006400"] = f["#808080"] = f["#2E4E4D"] = f["#EFEFEF"] = 0;
-					f["#8B008B"] = f["#4682B4"] = f["#E9967A"] = f["#818000"] = 0;
+		   			f["#00008C"] = f["#006400"] = f["#808080"] = f["#2E4E4D"] = f["#B8860A"] = f["#00BFFE"]= 0;
+					f["#8B008B"] = f["#4682B4"] = f["#E9967A"] = f["#818000"] = f["#FF8C00"] = f["#9831CC"] = 0;
 
 		   			var tree_count_in_col;
 		   			for (var c_col = 1; c_col < FIELD_WIDTH+1; c_col++) 
@@ -172,8 +149,8 @@ $(function() {
 		   			if (c_col == FIELD_WIDTH+1 && c_row == FIELD_WIDTH){
 		   				console.log("Ir1");
 		   				var parks_ok = true;
-		   				for (var c = parkColors.length - 1; c >= 0; c--) {
-		   					if (f[parkColors[c]] != 2){
+		   				for (var c = currentPark.length - 1; c >= 0; c--) {
+		   					if (f[currentPark[c]] != 2){
 		   						parks_ok = false;
 		   						break;
 		   					};
@@ -207,10 +184,10 @@ $(function() {
 			{
 				var field_id = (row-1)*FIELD_WIDTH+col;
 
-				for (var i = parkColors.length - 1; i >= 0; i--) 
+				for (var i = currentPark.length - 1; i >= 0; i--) 
 				{
-					if ($.inArray(field_id, f[parkColors[i]].ids) > -1){
-						var color = parkColors[i];
+					if ($.inArray(field_id, f[currentPark[i]].ids) > -1){
+						var color = currentPark[i];
 						fields[field_id] = {"row":row, "col":col, "color":color, "status":"empty"};
 					}
 				}
@@ -228,5 +205,43 @@ $(function() {
 		d = new Date();
 		console.log(d.getTime() - start);
     });
+
+    function generateParks(w, h){
+    	for (var row = 1; row <= h; row++) 
+		{
+			for (var col = 1; col <= w; col++) 
+			{
+				var field_id = (row-1)*w+col;
+				$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px">'+field_id+'</div>');
+
+				fields[field_id] = {"row":row, "col":col, "color":"#ddd", "status":"empty"};
+				margin_left += 52;
+			}
+			margin_left = 150;
+			margin_top += 52;
+		}
+    }
+
+    function isInt(value) {
+	  var x;
+	  if (isNaN(value)) {
+	    return false;
+	  }
+	  x = parseFloat(value);
+	  return (x | 0) === x;
+	}
+
+    $('#bttn-generate').click(function() { 
+    	if ( isInt($('.height').val()) && isInt($('.width').val()) )
+    	{
+    		if ( $('.height').val() <= 12 && $('.width').val() <= 12 ){
+		    	FIELD_HEIGHT = $('.height').val();
+		    	FIELD_WIDTH = $('.width').val();
+		    	generateParks(FIELD_WIDTH, FIELD_HEIGHT);
+		    	document.getElementById("bttn-solve").disabled = false;
+	    	}
+    	}
+    });
+
    //console.log(performance.timing.connectEnd - performance.timing.connectStart);
 });
