@@ -1,17 +1,25 @@
 $(function() {
 
-	var FIELD_HEIGHT = 9
-	var FIELD_WIDTH = 9;
+	var FIELD_HEIGHT = 8;
+	var FIELD_WIDTH = 8;
 
 	var margin_left = 150;
 	var margin_top = 25	;
-	var current_color = '#ddd';
+	var current_color = '#00008C';
 	var parks = 0;
 
 	var fields = [];
 	var parkColors = ['#00008C','#006400','#808080','#8B008B','#818000','#4682B4','#E9967A','#2E4E4D','#B8860A','#00BFFE','#FF8C00','#9831CC'];
 	var currentPark = [];
 	var f = [];
+
+	var mouseDown = 0;
+	document.body.onmousedown = function() { 
+	    mouseDown = 1;
+	}
+	document.body.onmouseup = function() {
+	    mouseDown = 0;
+	}
 
 	for (var i = parkColors.length - 1; i >= 0; i--) {
 		$("#colorlist").append('<li class="choicecolor" id="'+parkColors[i]+'" style="background-color:'+parkColors[i]+';"></li>');
@@ -25,19 +33,21 @@ $(function() {
         return false; 
     });
 
-   $(document).on('click', '.field', function() { // generated element 
-        var id = $(this).attr('id');
-        $( this ).css("background-color", current_color);
+    $(document).on('mousedown mouseover', '.field', function() {
+    	if (mouseDown == 1) {
+    		var id = $(this).attr('id');
+	        $( this ).css("background-color", current_color);
 
-        if ( f[current_color] === undefined ){
-        	f[current_color] = {"trees":0, "ids": [parseInt(id)]}; 	
-        	currentPark.push(current_color);
-        }
-        else{
-        	f[current_color].ids.push(parseInt(id));
-        }
-        return false; 
-    });
+	        if ( f[current_color] === undefined ){
+	        	f[current_color] = {"trees":0, "ids": [parseInt(id)]}; 	
+	        	currentPark.push(current_color);
+	        }
+	        else if ($.inArray(parseInt(id), f[current_color].ids) == -1){
+	        	f[current_color].ids.push(parseInt(id));
+	        }
+	        console.log(f[current_color].ids); 
+		}
+	});
 
    function getAdj(id, w, h){
 
@@ -110,8 +120,8 @@ $(function() {
 		   		
 		   		fields[current_tree_pos+whole_rows].status = "tree"; // new tree
 		   		last_placed_trees[1] = current_tree_pos+whole_rows;
-
-		   			fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty"; // delete previous second tree
+		   		
+				fields[current_tree_pos-1+2+current_number+whole_rows].status = "empty"; // delete previous second tree
 
 		   		if ( current_tree_pos > 1 ){ // on first tree change
 		   			fields[current_tree_pos-1+whole_rows].status = "empty"; //delete previous tree		   	
@@ -130,8 +140,9 @@ $(function() {
 
 		   		}
 		   		else{
-		   			f["#00008C"] = f["#006400"] = f["#808080"] = f["#2E4E4D"] = f["#B8860A"] = f["#00BFFE"]= 0;
-					f["#8B008B"] = f["#4682B4"] = f["#E9967A"] = f["#818000"] = f["#FF8C00"] = f["#9831CC"] = 0;
+		   			for (var park_color = currentPark.length - 1; park_color >= 0; park_color--) {
+		   				f[currentPark[park_color]] = 0;
+		   			}
 
 		   			var tree_count_in_col;
 		   			for (var c_col = 1; c_col < FIELD_WIDTH+1; c_col++) 
@@ -147,7 +158,6 @@ $(function() {
 		   				if (tree_count_in_col > 2) break;
 		   			};
 		   			if (c_col == FIELD_WIDTH+1 && c_row == FIELD_WIDTH){
-		   				console.log("Ir1");
 		   				var parks_ok = true;
 		   				for (var c = currentPark.length - 1; c >= 0; c--) {
 		   					if (f[currentPark[c]] != 2){
@@ -156,7 +166,6 @@ $(function() {
 		   					};
 		   				};
 		   				if (parks_ok) {
-		   					console.log("Ir"); 
 		   					return last_placed_trees;				
 		   				}
 		   			}
@@ -196,6 +205,7 @@ $(function() {
 			margin_left = 150;
 			margin_top += 51;
 		}
+		console.log(fields);
 
  		var d = new Date();
 		var start = d.getTime();
@@ -212,7 +222,7 @@ $(function() {
 			for (var col = 1; col <= w; col++) 
 			{
 				var field_id = (row-1)*w+col;
-				$("#container").append('<div class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px">'+field_id+'</div>');
+				$("#container").append('<div unselectable="on" onselectstart="return false;" onmousedown="return false;"class="field" id="'+field_id+'" style="margin-left: '+margin_left+'px; margin-top:'+margin_top+'px">'+field_id+'</div>');
 
 				fields[field_id] = {"row":row, "col":col, "color":"#ddd", "status":"empty"};
 				margin_left += 52;
@@ -235,8 +245,8 @@ $(function() {
     	if ( isInt($('.height').val()) && isInt($('.width').val()) )
     	{
     		if ( $('.height').val() <= 12 && $('.width').val() <= 12 ){
-		    	FIELD_HEIGHT = $('.height').val();
-		    	FIELD_WIDTH = $('.width').val();
+		    	FIELD_HEIGHT = parseInt($('.height').val());
+		    	FIELD_WIDTH = parseInt($('.width').val());
 		    	generateParks(FIELD_WIDTH, FIELD_HEIGHT);
 		    	document.getElementById("bttn-solve").disabled = false;
 	    	}
