@@ -62,34 +62,37 @@ $(function() {
 	});
 
  	$('#bttn-solve').click(function() { 
-	 	for (var row = 1; row <= FIELD_HEIGHT; row++) 
-		{
-			for (var col = 1; col <= FIELD_WIDTH; col++) 
+ 		$( "#bttn-solve" ).html("Solving...");
+ 		setTimeout(function(){
+		 	for (var row = 1; row <= FIELD_HEIGHT; row++) 
 			{
-				var field_id = (row-1)*FIELD_WIDTH+col;
-
-				for (var i = currentPark.length - 1; i >= 0; i--) 
+				for (var col = 1; col <= FIELD_WIDTH; col++) 
 				{
-					if ($.inArray(field_id, f[currentPark[i]].ids) > -1){
-						var color = currentPark[i];
-						fields[field_id] = {"row":row, "col":col, "color":color, "status":"empty"};
+					var field_id = (row-1)*FIELD_WIDTH+col;
+
+					for (var i = currentPark.length - 1; i >= 0; i--) 
+					{
+						if ($.inArray(field_id, f[currentPark[i]].ids) > -1){
+							var color = currentPark[i];
+							fields[field_id] = {"row":row, "col":col, "color":color, "status":"empty"};
+						}
 					}
+					margin_left += 51;
 				}
-				margin_left += 51;
+				margin_left = 150;
+				margin_top += 51;
 			}
-			margin_left = 150;
-			margin_top += 51;
-		}
-		console.log(fields);
+			console.log(fields);
 
- 		var d = new Date();
-		var start = d.getTime();
-
-		showResult(solveParks(1,[])); // solving game and showing result
-		
-		d = new Date();
-		$( "#bttn-solve" ).html("Solved in: "+(d.getTime() - start)+"ms");
-		console.log(d.getTime() - start);
+	 		var d = new Date();
+			var start = d.getTime();
+			
+			showResult(solveParks(1,[])); // solving game and showing result
+			
+			d = new Date();
+			$( "#bttn-solve" ).html("Solved in: "+(d.getTime() - start)+"ms");
+			console.log(d.getTime() - start);
+		}, 20);
     });
 
     function generateParks(w, h){
